@@ -1,11 +1,14 @@
 package comercio.ejer3.controller;
 
+import java.net.URI;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import comercio.ejer3.dto.ProductoRequestDTO;
 import comercio.ejer3.dto.ProductoResponseDTO;
@@ -29,9 +32,12 @@ public class ProductoController {
 
         ProductoResponseDTO response = productoService.crearProducto(dto);
 
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .header("Location", "/api/productos/" + response.getId())
-                .body(response);
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(response.getId())
+                .toUri();
+
+        return ResponseEntity.created(location).body(response);
     }
 }
